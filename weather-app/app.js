@@ -1,9 +1,22 @@
-const request = require('request');
+const geoCode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
-const url = 'http://api.weatherstack.com/current?access_key=ccacfbe9ccab701b5a005a57af3c405a&query=Hyderabad';
-request({url: url,json:true},(error,response)=>{
-    const data = response.body.current;
-    console.log(`It is currently ${data.temperature} degrees out.
-    There is a ${data.precip}% chance of rain`);
-});
-
+const location = process.argv[2]
+if(location){
+    geoCode(location,(error,{latitude,longitude,location}={})=>{
+        if(error){
+            return console.log(error);
+        }
+    
+        forecast(latitude,longitude,(err,resp)=>{       
+            if(error){
+                return console.log(error);
+            }
+            console.log(location);
+            console.log(resp);
+        })
+    })
+}
+else {
+    console.log('please provide the location');
+}
