@@ -1,41 +1,23 @@
-// CRUD create read update & delete.
-
-const mongodb = require('mongodb');
-const MongoClient =  mongodb.MongoClient;
-
+const {MongoClient,ObjectId} = require('mongodb');
 const connectionUrl = 'mongodb://localhost:27017';
-const databaseName = 'task-manager';
 
-MongoClient.connect(connectionUrl,{useNewUrlParser: true},(err,client)=>{
-    if(err){
-        return console.log('Unable to connect to database!');
-    }
+// const id = new ObjectId();
+// console.log(id);
+// console.log(id.id.length);
 
-    const db  = client.db(databaseName);
+// console.log(id.toHexString().length);
 
-    // insertOne is async
-    db.collection('users').insertOne({
-        name: 'Nivas',
-        age: 26
-    },(error,result)=>{
-        if(error){
-            return console.log('unable to insert user');
-        }
-
-        console.log(result);
+MongoClient.connect(connectionUrl,(err,client)=>{
+    const db = client.db('task-manager');
+    db.collection('users').findOne({name:'Sahruday'},(err,data)=>{
+        // console.log(data);
     })
 
-    db.collection('users').insertMany([{
-        name: 'Savin',
-        age: 23
-    },
-    {
-        name: 'Ganther',
-        age: 17
-    }],(err,result)=>{
-        if(err){
-            return console.log('unable to insert docs')
-        }
-        console.log(result.insertedIds);
+    db.collection('users').find({age: 26}).toArray((err,users)=>{
+        // console.log(users);
+    });
+
+    db.collection('users').find({age: 26}).limit(2).toArray((err,data)=>{
+        console.log(data);
     })
-});
+})
