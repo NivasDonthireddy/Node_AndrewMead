@@ -1,23 +1,21 @@
 const {MongoClient,ObjectId} = require('mongodb');
 const connectionUrl = 'mongodb://localhost:27017';
-
-// const id = new ObjectId();
-// console.log(id);
-// console.log(id.id.length);
-
-// console.log(id.toHexString().length);
+const dbName = 'task-manager';
 
 MongoClient.connect(connectionUrl,(err,client)=>{
-    const db = client.db('task-manager');
-    db.collection('users').findOne({name:'Sahruday'},(err,data)=>{
-        // console.log(data);
-    })
-
-    db.collection('users').find({age: 26}).toArray((err,users)=>{
-        // console.log(users);
+    const db = client.db(dbName);
+    const updatePromise = db.collection('users').updateOne({
+        _id:new ObjectId("631db18acf5b5a37070fe2b6")
+    },{
+        $inc: {
+            age:1
+        }
     });
 
-    db.collection('users').find({age: 26}).limit(2).toArray((err,data)=>{
-        console.log(data);
+    updatePromise.then((result)=>{
+        console.log(result);
+    }).catch((error)=>{
+        console.log(error);
     })
-})
+
+});
