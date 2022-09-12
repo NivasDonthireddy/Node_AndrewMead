@@ -3,7 +3,19 @@ mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api');
 
 const User = mongoose.model('User',{
     name:  {
-        type: String
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 7,
+        trim: true,
+        validate(value){
+            if(value.includes('password')){
+                throw new Error('cannot contain password key');
+            }
+        },
     },
     age: {
         type: Number
@@ -12,6 +24,7 @@ const User = mongoose.model('User',{
 
 const me = new User({
     name: 'Andrew',
+    password: '     N1v@sr3ddy    ',
     age: 26
 })
 
