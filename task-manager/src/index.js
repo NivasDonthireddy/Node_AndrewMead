@@ -19,12 +19,51 @@ app.post('/users',(req,res)=>{
     })
 })
 
+app.get('/users',(req,res)=>{
+    User.find({}).then((users)=>{
+        res.send(users);
+    }).catch((err)=>{
+        res.send(err);
+    })
+})
+
+app.get('/users/:id',(req,res)=>{
+    const _id = req.params.id;
+    User.findById(_id).then((user)=>{
+        if(!user){
+            return res.status(404).send('Not Found');
+        }
+        res.send(user);
+    }).catch((err)=>{
+        res.send(err);
+    })
+})
+
+app.get('/tasks',(req,res)=>{
+    Task.find({}).then((tasks)=>{
+        res.send(tasks);
+    }).catch((err)=>{
+        res.send(err);
+    })
+})
+
+app.get('/tasks/:id',(req,res)=>{
+    Task.findById(req.params.id).then((task)=>{
+        if(!task){
+            return res.status(400).send();
+        }
+        res.send(task);
+    }).catch((err)=>{
+        res.send(err);
+    })
+})
+
 app.post('/tasks',(req,res)=>{
     const task = new Task(req.body);
     task.save().then(()=>{
         res.send(task);
     }).catch((err)=>{
-        res.send(err).status(400);
+        res.status(400).send(err);
     })
 })
 
