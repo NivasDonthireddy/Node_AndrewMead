@@ -1,31 +1,26 @@
 require('../src/db/mongoose');
 const express = require('express');
-const userRouter = require('../src/routers/user');
-const taskRouter = require('../src/routers/task');
-
+const userRouter = require('./routers/userRouter');
+const taskRouter = require('./routers/taskRouter');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT ||  3000;
+
+app.use((req,res,next)=>{
+    if(req.method === 'GET'){
+        res.send('GET requests are disabled');
+    }else {
+        next();
+    }
+})
 
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
 
+// without middleware:  ne
+
 app.listen(port,()=>{
     console.log(`Server is up on ${port}`);
 });
-
-
-const bcrypt = require('bcryptjs');
-const myFunction = async()=>{
-    const password = "red2134!";
-    const hashedPassword = await bcrypt.hash(password,8);
-
-    const isMatch =  await bcrypt.compare('red2134!',hashedPassword);
-    console.log(isMatch);
-    console.log('hello');
-
-    console.log(password,hashedPassword);
-}
-
-myFunction();
