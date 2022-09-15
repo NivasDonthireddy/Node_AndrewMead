@@ -45,6 +45,15 @@ userSchema.statics.findByCredentials = async (email,password)=>{
     return user;
 }
 
+// public profile
+userSchema.methods.toJSON = function (){
+    const user = this;
+    const userObject = user.toObject();
+    delete userObject.password;
+    delete userObject.tokens;
+    return userObject;
+}
+
 // generating auth tokens
 userSchema.methods.generateAuthToken = async function(){
     const user = this;
@@ -65,8 +74,6 @@ userSchema.pre('save',async function (next) {
     }
     next();
 })
-
-
 
 const User = mongoose.model('User',userSchema);
 
