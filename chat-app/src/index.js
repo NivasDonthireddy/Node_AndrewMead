@@ -2,6 +2,7 @@ const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
 const express = require('express');
+const Filter = require('bad-words');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,13 +13,28 @@ const publicDirectoryPath = path.join(__dirname,'../public');
 
 app.use(express.static(publicDirectoryPath));
 let count = 0;
+
 io.on('connection',(socket)=>{
     console.log('New Websocket Connection');
-    socket.emit('countUpdated',count);
-    socket.on('increment',()=>{
-        count++;
-        io.emit('countUpdated',count);
+    socket.emit('message','Welcome!');
+    socket.broadcast.emit('message','A new user has joined!');
+    socket.on('sendMessage',(msg,callback)=>{
+        const filter = new Filter();
+        if(filter.isProfane(msg)){
+            return callback('Profanity is not allowed');
+        }
+        io.emit('message',msg);
+        callback();
+    });
+
+    socket.on('sendLocation',(data,callback)=>{
+        socket.emit('message',`https://maps.google.com/?q=${data.latitude},${data.longitude}`);
+        callback('Location shared!');
     })
+
+    socket.on('disconnect',()=>{
+        io.emit('message', 'A user has left');
+    });
 });
 
 server.listen(port,()=>{
